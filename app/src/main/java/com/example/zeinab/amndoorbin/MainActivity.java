@@ -30,9 +30,10 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
+//import java.io.File;
+//import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
@@ -41,6 +42,17 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import info.guardianproject.iocipher.File;
+import info.guardianproject.iocipher.FileOutputStream;
+import info.guardianproject.iocipher.FileReader;
+import info.guardianproject.iocipher.IOCipherFileChannel;
+import info.guardianproject.iocipher.VirtualFileSystem;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+
 public class MainActivity extends AppCompatActivity {
     private Size previewsize;
     private Size jpegSizes[] = null;
@@ -48,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private CameraDevice cameraDevice;
     private CaptureRequest.Builder previewBuilder;
     private CameraCaptureSession previewSession;
+    private static VirtualFileSystem vfs;
     Button getpicture;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -292,11 +305,25 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    private static File getOutputMediaFile() {
-        File mediaStorageDir = new File(
-                Environment
-                        .getExternalStorageDirectory(),
-                "MyCameraApp");
+    private File getOutputMediaFile() {
+
+//        File mediaStorageDir = new File(
+//                Environment
+//                        .getExternalStorageDirectory(),
+//                "MyCameraApp");
+
+        vfs = VirtualFileSystem.get();
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(),"MyCamAppCipher");
+        vfs.createNewContainer(mediaStorageDir.getAbsolutePath() , "my fake password");
+        Log.d("Zeinab", "Create new container! :D");
+        Toast.makeText(MainActivity.this, "Create new container! :D", Toast.LENGTH_SHORT).show();
+
+        if (!vfs.isMounted()) {
+            vfs.mount(mediaStorageDir.getAbsolutePath(), "my fake password");
+            Log.d("Zeinab", "mount! :D");
+            Toast.makeText(MainActivity.this, "mount! :D", Toast.LENGTH_SHORT).show();
+        }
+
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
                 Log.d("MyCameraApp", "failed to create directory");
@@ -310,5 +337,15 @@ public class MainActivity extends AppCompatActivity {
         mediaFile = new File(mediaStorageDir.getPath() + File.separator
                 + "IMG_" + timeStamp + ".jpg");
         return mediaFile;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (vfs.isMounted()) {
+            vfs.unmount();
+            Log.d("Zeinab", "Unmount! :D");
+            Toast.makeText(MainActivity.this, "Unmount! :D", Toast.LENGTH_SHORT).show();
+        }
     }
 }
