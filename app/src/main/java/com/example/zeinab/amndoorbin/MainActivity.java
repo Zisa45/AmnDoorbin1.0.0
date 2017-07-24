@@ -2,6 +2,7 @@ package com.example.zeinab.amndoorbin;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private CameraCaptureSession previewSession;
     private static VirtualFileSystem vfs;
     Button getpicture;
+    Button btnShow;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
     static {
@@ -78,12 +80,22 @@ public class MainActivity extends AppCompatActivity {
         textureView = (TextureView) findViewById(R.id.textureview);
         textureView.setSurfaceTextureListener(surfaceTextureListener);
         getpicture = (Button) findViewById(R.id.getpicture);
+        btnShow = (Button) findViewById(R.id.button2);
+
+        btnShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, Gallery.class));
+            }
+        });
+
         getpicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getPicture();
             }
         });
+
     }
 
     void getPicture() {
@@ -334,8 +346,10 @@ public class MainActivity extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
                 .format(new Date());
         File mediaFile;
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                + "IMG_" + timeStamp + ".jpg");
+//        mediaFile = new File(mediaStorageDir.getPath() + File.separator
+//                + "IMG_" + timeStamp + ".jpg");
+
+        mediaFile = new File(Environment.getExternalStorageDirectory()+"/MyCamAppCipher"+"/zeinab.jpg");
         return mediaFile;
     }
 

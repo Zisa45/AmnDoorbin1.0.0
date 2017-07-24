@@ -9,11 +9,22 @@
         android:id="@+id/textureview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+
+
     <Button
         android:id="@+id/getpicture"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="getPicture"/>
+        android:layout_gravity="right"
+        android:layout_weight="1"
+        android:text="getPicture" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button" />
 
 </FrameLayout>
